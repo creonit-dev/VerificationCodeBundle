@@ -2,7 +2,7 @@
   "name": "creonit/verification-code-bundle",
   "type": "symfony-bundle",
   "description": "",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "keywords": [
     "creonit",
     "symfony"
