@@ -1,0 +1,26 @@
+{
+  "name": "creonit/verification-code-bundle",
+  "type": "symfony-bundle",
+  "description": "",
+  "license": "MIT",
+  "keywords": [
+    "creonit",
+    "symfony"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Creonit\\VerificationCodeBundle\\": ""
+    }
+  },
+  "require": {
+    "php": ">=7.2.5",
+    "symfony/framework-bundle": "^4.4|^5.0",
+    "symfony/event-dispatcher": "^4.4|^5.0",
+    "symfony/serializer": "^4.4|^5.0",
+    "symfony/validator": "^4.4|^5.0",
+    "creonit/rest-bundle": ">=1.0.3"
+  },
+  "require-dev": {
+    "symfony/profiler-pack": "^1.0"
+  }
+}

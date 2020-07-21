@@ -1,0 +1,42 @@
+services:
+  Creonit\VerificationCodeBundle\Controller\:
+    resource: '../../Controller/*Controller.php'
+    autowire: true
+    autoconfigure: true
+
+  Creonit\VerificationCodeBundle\Repository\:
+    resource: '../../Repository/*Repository.php'
+    autowire: true
+    autoconfigure: true
+
+  Creonit\VerificationCodeBundle\Normalizer\:
+    resource: '../../Normalizer/*Normalizer.php'
+    autowire: true
+    autoconfigure: true
+    calls:
+      - ['setNormalizer', ['@serializer']]
+
+  creonit_verification_code.code_manager:
+    class: Creonit\VerificationCodeBundle\CodeManager
+    autowire: true
+    public: true
+
+  creonit_verification_code.generator.number:
+    class: Creonit\VerificationCodeBundle\Generator\NumberCodeGenerator
+    public: true
+
+  Creonit\VerificationCodeBundle\CodeManager:
+    alias: creonit_verification_code.code_manager
+    public: false
+
+  Creonit\VerificationCodeBundle\DataCollector\VerificationCodeCollector:
+    class: Creonit\VerificationCodeBundle\DataCollector\VerificationCodeCollector
+    autoconfigure: true
+    autowire: true
+    tags:
+      - {name: kernel.event_listener, event: creonit_verification_code.create_code, method: onCreateCode}
+      - {name: data_collector, template: '@CreonitVerificationCode/Profiler/profiler.html.twig', id: 'creonitVerificationCode.verificationCode'}
+
+  Creonit\VerificationCodeBundle\Scope\VerificationScope: ~
+  Creonit\VerificationCodeBundle\Repository\VerificationCodeRepositoryInterface: '@Creonit\VerificationCodeBundle\Repository\VerificationCodeRepository'
+

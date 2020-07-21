@@ -1,0 +1,29 @@
+config:
+  required: true
+
+database:
+  +:
+    name: default
+    namespace: Creonit\VerificationCodeBundle\Model
+    defaultIdMethod: native
+    identifierQuoting: true
+
+  +vendor:
+    type: mysql
+    parameters:
+      Engine: InnoDB
+      Charset: utf8
+
+  +behavior:
+    - auto_add_pk
+
+  verification_code:
+    +: {identifierQuoting: true}
+    scope: varchar(255) key(10)
+    key: varchar(255) key(10)
+    code: varchar(255) key(10)
+    expired_at: - datetime
+    active: bool = 1
+    verified: bool
+    +behavior:
+      - timestampable
