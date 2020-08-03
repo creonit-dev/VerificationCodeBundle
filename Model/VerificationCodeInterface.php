@@ -22,4 +22,6 @@ interface VerificationCodeInterface
     public function setExpiredAfter(int $seconds);
 
     public function setVerified(bool $verified);
+
+    public function getScope(): string;
 }

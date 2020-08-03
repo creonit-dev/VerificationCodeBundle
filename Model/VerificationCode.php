@@ -25,4 +25,9 @@ class VerificationCode extends BaseVerificationCode implements VerificationCodeI
 
         return $this->setExpiredAt($expiredAt);
     }
+
+    public function getScope(): string
+    {
+        return (string)parent::getScope();
+    }
 }
