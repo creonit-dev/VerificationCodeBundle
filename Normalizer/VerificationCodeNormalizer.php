@@ -16,7 +16,6 @@ class VerificationCodeNormalizer extends AbstractNormalizer
     {
         $data = [
             'key' => $object->getKey(),
-            'code' => $object->getCode(),
             'createdAt' => $object->getCreatedAt(),
             'expiredAt' => $object->getExpiredAt(),
         ];
