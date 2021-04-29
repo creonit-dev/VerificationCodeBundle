@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Creonit\VerificationCodeBundle\Model;
 
@@ -24,4 +25,6 @@ interface VerificationCodeInterface
     public function setVerified(bool $verified);
 
     public function getScope(): string;
+
+    public function isVerified(): bool;
 }
