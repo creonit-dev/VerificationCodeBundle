@@ -30,4 +30,9 @@ class VerificationCode extends BaseVerificationCode implements VerificationCodeI
     {
         return (string)parent::getScope();
     }
+
+    public function isVerified(): bool
+    {
+        return parent::isVerified();
+    }
 }

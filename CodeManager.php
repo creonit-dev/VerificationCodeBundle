@@ -1,54 +1,50 @@
 <?php
+declare(strict_types = 1);
 
 namespace Creonit\VerificationCodeBundle;
 
 
 use Creonit\VerificationCodeBundle\Context\CodeContext;
 use Creonit\VerificationCodeBundle\Event\CreateCodeEvent;
+use Creonit\VerificationCodeBundle\Event\ValidateKeyEvent;
 use Creonit\VerificationCodeBundle\Event\VerificationCodeEvent;
 use Creonit\VerificationCodeBundle\Event\VerificationEvents;
 use Creonit\VerificationCodeBundle\Exception\UnknownScopeException;
 use Creonit\VerificationCodeBundle\Generator\CodeGeneratorInterface;
+use Creonit\VerificationCodeBundle\Model\VerificationCodeInterface;
 use Creonit\VerificationCodeBundle\Repository\VerificationCodeRepositoryInterface;
 use Creonit\VerificationCodeBundle\Scope\VerificationScopeInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class CodeManager
 {
-    /**
-     * @var CodeGeneratorInterface
-     */
-    protected $codeGenerator;
+    protected CodeGeneratorInterface $codeGenerator;
+    protected VerificationCodeRepositoryInterface $codeRepository;
+    protected EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var VerificationScopeInterface[]
      */
     protected $scopes = [];
 
-    /**
-     * @var VerificationCodeRepositoryInterface
-     */
-    protected $codeRepository;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    public function __construct(CodeGeneratorInterface $codeGenerator, VerificationCodeRepositoryInterface $codeRepository, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        CodeGeneratorInterface $codeGenerator,
+        VerificationCodeRepositoryInterface $codeRepository,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->codeGenerator = $codeGenerator;
         $this->codeRepository = $codeRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function addScope(VerificationScopeInterface $scope)
+    public function addScope(VerificationScopeInterface $scope): CodeManager
     {
         $this->scopes[$scope->getName()] = $scope;
         return $this;
     }
 
-    public function getScope(string $scopeName)
+    public function getScope(string $scopeName): VerificationScopeInterface
     {
         if (!isset($this->scopes[$scopeName])) {
             throw new UnknownScopeException($scopeName);
@@ -96,7 +92,7 @@ class CodeManager
         return $nextAttemptTime > 0 ? $nextAttemptTime : 0;
     }
 
-    public function verificationCode(CodeContext $context)
+    public function verificationCode(CodeContext $context): bool
     {
         if (!$context->getCode()) {
             return false;
@@ -115,5 +111,32 @@ class CodeManager
         $this->codeRepository->save($code);
 
         return true;
+    }
+
+    public function validateKey($key, VerificationScopeInterface $scope): array
+    {
+        $event = new ValidateKeyEvent($key, $scope);
+        $this->eventDispatcher->dispatch($event, VerificationEvents::VALIDATE_KEY);
+
+        return $event->getErrors();
+    }
+
+    public function getVerifiedCode(CodeContext $context): ?VerificationCodeInterface
+    {
+        $code = $this->codeRepository->findByContext($context);
+
+        if ($code && !$code->isVerified()) {
+            $code = null;
+        }
+
+        return $code;
+    }
+
+    /**
+     * @return VerificationScopeInterface[]
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
     }
 }
