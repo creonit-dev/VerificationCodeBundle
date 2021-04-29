@@ -131,4 +131,12 @@ class CodeManager
 
         return $code;
     }
+
+    /**
+     * @return VerificationScopeInterface[]
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
 }
